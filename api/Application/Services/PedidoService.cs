@@ -72,5 +72,16 @@ namespace api.Application.Services
             CriadoEm = p.CriadoEm,
             AtualizadoEm = p.AtualizadoEm
         };
+
+        public async Task<PedidoDto?> UpdatePedido(Guid pedidoId, UpdatePedidoRequest request)
+        {
+            var pedido = await _repository.GetPedidoById(pedidoId);
+            if (pedido == null) return null;
+
+            pedido.UpdatePedido(request.Contratacao, request.Status);
+            var updated = await _repository.AtualizarPedido(pedidoId, pedido);
+            return updated == null ? null : ToDto(updated);
+        }
+
     }
 }

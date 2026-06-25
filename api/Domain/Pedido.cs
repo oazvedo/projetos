@@ -40,6 +40,14 @@ namespace api.Domain
             CriadoEm = DateTime.UtcNow;
         }
 
+        public void UpdatePedido(PedidoTipoContratacaoEnum newContratacao, PedidoStatus newStatus)
+        {
+            ValidarStatus();
+            Status = newStatus;
+            Contracacao = newContratacao;
+            AtualizadoEm = DateTime.UtcNow;
+        }
+
         public void UpdateStatus(PedidoStatus novoStatus)
         {
             ValidarStatus();

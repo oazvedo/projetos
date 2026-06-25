@@ -9,6 +9,7 @@ namespace api.Application.Services.Interfaces
         Task<IEnumerable<PedidoDto>> GetPedidosByUsuarioId(Guid usuarioId);
         Task<PedidoDto?> GetPedidoById(Guid id);
         Task<PedidoDto> CreatePedido(Guid usuarioId, CreatePedidoRequest request);
+        Task<PedidoDto?> UpdatePedido(Guid pedidoId, UpdatePedidoRequest request);
         Task<PedidoDto?> UpdatePedidoStatus(Guid id, PedidoStatus newStatus);
         Task<PedidoDto?> UpdatePedidoContratacao(Guid id, PedidoTipoContratacaoEnum novaContratacao);
         Task<bool> DeleteAsync(Guid id);
