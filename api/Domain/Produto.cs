@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
 using Newtonsoft.Json;
 
@@ -26,12 +27,14 @@ namespace api.Domain
         [JsonPropertyName("atualizado_em")]
         public DateTime? AtualizadoEm { get; set; }
 
-        public Produto(string nome, string descricao)
+        [SetsRequiredMembers]
+        public Produto(string nome, string descricao, string codigo, bool status = true)
         {
             Id = Guid.NewGuid();
             Nome = nome;
             Descricao = descricao;
-            Status = true;
+            Codigo = codigo;
+            Status = status;
             CriadoEm = DateTime.UtcNow;
             ValidarProduto();
         }
