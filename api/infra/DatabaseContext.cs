@@ -14,6 +14,7 @@ namespace api.infra
         public DbSet<Permissao> Permissoes { get; set; }
         public DbSet<UsuarioPermissao> UsuarioPermissoes { get; set; }
         public DbSet<Pedido> Pedidos {get; set;}
+        public DbSet<Produto> Produtos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -111,6 +112,42 @@ namespace api.infra
                 entity.Property(u => u.UsuarioId)
                     .HasColumnName("usuario_id");
 
+                entity.Property(u => u.CriadoEm)
+                    .HasColumnName("criado_em")
+                    .IsRequired();
+
+                entity.Property(u => u.AtualizadoEm)
+                    .HasColumnName("atualizado_em")
+                    .IsRequired(false);
+            });
+
+
+            modelBuilder.Entity<Produto>(entity =>
+            {
+                entity.ToTable("produtos");
+
+                entity.HasKey(u => u.Id);
+
+                entity.Property(u => u.Id)
+                    .HasColumnName("id")
+                    .IsRequired();
+
+                entity.Property(u => u.Nome)
+                    .HasColumnName("nome")
+                    .IsRequired();
+
+                entity.Property(u => u.Descricao)
+                    .HasColumnName("descricao")
+                    .IsRequired();
+
+                entity.Property(u => u.Codigo)
+                    .HasColumnName("codigo_interno")
+                    .IsRequired();
+                
+                entity.Property(u => u.Status)
+                    .HasColumnName("status")
+                    .IsRequired();
+                
                 entity.Property(u => u.CriadoEm)
                     .HasColumnName("criado_em")
                     .IsRequired();
