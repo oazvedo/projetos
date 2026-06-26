@@ -9,7 +9,16 @@ namespace api.Application.DTOs.Pedido
         [JsonPropertyName("contratacao")]
         public PedidoTipoContratacaoEnum contratacao {get;set;}
 
+        [JsonPropertyName("itens")]
+        public List<CreatePedidoItemRequest> itens { get; set; } = new();
+    }
+
+    public class CreatePedidoItemRequest
+    {
         [JsonPropertyName("produto_id")]
-        public Guid produtoId {get; set; }
+        public Guid produtoId { get; set; }
+
+        [JsonPropertyName("quantidade")]
+        public int quantidade { get; set; }
     }
 }

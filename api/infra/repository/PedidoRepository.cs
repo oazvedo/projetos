@@ -16,14 +16,16 @@ namespace api.infra.repository
         public async Task<IEnumerable<Pedido>> GetPedidosAsync()
         {
             return await _context.Pedidos
-                .Include(p => p.Produto)
+                .Include(p => p.Usuario)
+                .Include(p => p.Itens).ThenInclude(i => i.Produto)
                 .ToListAsync();
         }
 
         public async Task<IEnumerable<Pedido>> GetPedidosByUsuarioIdAsync(Guid usuarioId)
         {
             return await _context.Pedidos
-                .Include(p => p.Produto)
+                .Include(p => p.Usuario)
+                .Include(p => p.Itens).ThenInclude(i => i.Produto)
                 .Where(p => p.UsuarioId == usuarioId)
                 .ToListAsync();
         }
@@ -31,7 +33,8 @@ namespace api.infra.repository
         public async Task<Pedido?> GetPedidoById(Guid id)
         {
             return await _context.Pedidos
-                .Include(p => p.Produto)
+                .Include(p => p.Usuario)
+                .Include(p => p.Itens).ThenInclude(i => i.Produto)
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
 
@@ -39,14 +42,15 @@ namespace api.infra.repository
         {
             _context.Pedidos.Add(pedido);
             await _context.SaveChangesAsync();
-            await _context.Entry(pedido).Reference(p => p.Produto).LoadAsync();
+            await _context.Entry(pedido).Collection(p => p.Itens).LoadAsync();
             return pedido;
         }
 
         public async Task<Pedido?> AtualizarPedido(Guid id, Pedido pedido)
         {
             var existing = await _context.Pedidos
-                .Include(p => p.Produto)
+                .Include(p => p.Usuario)
+                .Include(p => p.Itens).ThenInclude(i => i.Produto)
                 .FirstOrDefaultAsync(p => p.Id == id);
             if (existing == null) return null;
 

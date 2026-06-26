@@ -9,7 +9,10 @@ namespace api.Application.DTOs.Produto
 
         [JsonPropertyName("descricao")]
         public string Descricao { get; set; } = null!;
-        
+
+        [JsonPropertyName("preco")]
+        public decimal Preco { get; set; }
+
         [JsonPropertyName("codigo")]
         public string Codigo { get; set; } = null!;
 
@@ -24,7 +27,10 @@ namespace api.Application.DTOs.Produto
 
         [JsonPropertyName("descricao")]
         public string Descricao { get; set; } = null!;
-        
+
+        [JsonPropertyName("preco")]
+        public decimal Preco { get; set; }
+
         [JsonPropertyName("codigo")]
         public string Codigo { get; set; } = null!;
 

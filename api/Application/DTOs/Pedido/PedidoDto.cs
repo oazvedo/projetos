@@ -1,4 +1,4 @@
-using api.Application.DTOs.Produto;
+using System.Text.Json.Serialization;
 using api.Domain.Enums;
 using Newtonsoft.Json;
 
@@ -15,11 +15,17 @@ namespace api.Application.DTOs.Pedido
         [JsonProperty("contratacao")]
         public PedidoTipoContratacaoEnum Contracacao { get; set; }
 
-        [JsonProperty("produto")]
-        public ProdutoDto? Produto { get; set; }
+        [JsonProperty("itens")]
+        public List<PedidoItemDto> Itens { get; set; } = new();
+
+        [JsonProperty("valor_total")]
+        public decimal ValorTotal { get; set; }
 
         [JsonProperty("usuario_id")]
         public Guid UsuarioId { get; set; }
+
+        [JsonPropertyName("usuario_nome")]
+        public string? UsuarioNome {get; set;}
 
         [JsonProperty("criado_em")]
         public DateTime CriadoEm { get; set; }

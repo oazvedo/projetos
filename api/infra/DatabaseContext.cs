@@ -14,6 +14,7 @@ namespace api.infra
         public DbSet<Permissao> Permissoes { get; set; }
         public DbSet<UsuarioPermissao> UsuarioPermissoes { get; set; }
         public DbSet<Pedido> Pedidos {get; set;}
+        public DbSet<PedidoItem> PedidoItens { get; set; }
         public DbSet<Produto> Produtos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -112,14 +113,15 @@ namespace api.infra
                 entity.Property(u => u.UsuarioId)
                     .HasColumnName("usuario_id");
 
-                entity.Property(u => u.ProdutoId)
-                    .HasColumnName("produto_id")
-                    .IsRequired();
-
-                entity.HasOne(u => u.Produto)
+                entity.HasOne(u => u.Usuario)
                     .WithMany()
-                    .HasForeignKey(u => u.ProdutoId)
+                    .HasForeignKey(u => u.UsuarioId)
                     .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasMany(u => u.Itens)
+                    .WithOne()
+                    .HasForeignKey(i => i.PedidoId)
+                    .OnDelete(DeleteBehavior.Cascade);
 
                 entity.Property(u => u.CriadoEm)
                     .HasColumnName("criado_em")
@@ -130,6 +132,41 @@ namespace api.infra
                     .IsRequired(false);
             });
 
+
+            modelBuilder.Entity<PedidoItem>(entity =>
+            {
+                entity.ToTable("pedido_itens");
+
+                entity.HasKey(i => i.Id);
+
+                entity.Property(i => i.Id)
+                    .HasColumnName("id")
+                    .IsRequired();
+
+                entity.Property(i => i.PedidoId)
+                    .HasColumnName("pedido_id")
+                    .IsRequired();
+
+                entity.Property(i => i.ProdutoId)
+                    .HasColumnName("produto_id")
+                    .IsRequired();
+
+                entity.Property(i => i.Quantidade)
+                    .HasColumnName("quantidade")
+                    .IsRequired();
+
+                entity.Property(i => i.PrecoUnitario)
+                    .HasColumnName("preco_unitario")
+                    .HasColumnType("decimal(18,2)")
+                    .IsRequired();
+
+                entity.Ignore(i => i.Subtotal);
+
+                entity.HasOne(i => i.Produto)
+                    .WithMany()
+                    .HasForeignKey(i => i.ProdutoId)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
 
             modelBuilder.Entity<Produto>(entity =>
             {

@@ -39,7 +39,7 @@ namespace api.Controllers
         [Authorize(Policy = "Produto.Create")]
         public async Task<ActionResult<ProdutoDto>> Create(CreateProdutoRequest request)
         {
-            var produto = await _service.CreateAsync(new Produto(request.Nome, request.Descricao, request.Codigo, request.Status));
+            var produto = await _service.CreateAsync(new Produto(request.Nome, request.Descricao, request.Preco, request.Codigo, request.Status));
             return CreatedAtAction(nameof(GetProdutoById), new { id = produto.Id }, produto);
         }
 
@@ -47,7 +47,7 @@ namespace api.Controllers
         [Authorize(Policy = "Produto.Update")]
         public async Task<ActionResult<ProdutoDto>> Update(Guid id, UpdateProdutoRequest request)
         {
-            var entity = new Produto(request.Nome, request.Descricao, request.Codigo, request.Status);
+            var entity = new Produto(request.Nome, request.Descricao, request.Preco, request.Codigo, request.Status);
             entity.Id = id;
 
             var produto = await _service.UpdateAsync(entity);

@@ -1,5 +1,4 @@
 using api.Application.DTOs.Pedido;
-using api.Application.DTOs.Produto;
 using api.Application.Services.Interfaces;
 using api.domain.interfaces;
 using api.Domain;
@@ -39,10 +38,15 @@ namespace api.Application.Services
 
         public async Task<PedidoDto> CreatePedido(Guid usuarioId, CreatePedidoRequest request)
         {
-            var produto = await _produtoRepository.GetByIdAsync(request.produtoId)
-                ?? throw new KeyNotFoundException($"Produto '{request.produtoId}' não encontrado.");
+            var pedido = new Pedido(usuarioId, new List<PedidoItem>(), request.contratacao);
 
-            var pedido = new Pedido(usuarioId, produto.Id, request.contratacao);
+            foreach (var item in request.itens)
+            {
+                var produto = await _produtoRepository.GetByIdAsync(item.produtoId)
+                    ?? throw new KeyNotFoundException($"Produto '{item.produtoId}' não encontrado.");
+                pedido.AdicionarItem(produto, item.quantidade);
+            }
+
             await _repository.AdicionarPedido(pedido);
             return ToDto(pedido);
         }
@@ -70,25 +74,7 @@ namespace api.Application.Services
         public Task<bool> DeleteAsync(Guid id)
             => _repository.RemoverPedido(id);
 
-        private static PedidoDto ToDto(Pedido p) => new()
-        {
-            Id = p.Id,
-            UsuarioId = p.UsuarioId,
-            Status = p.Status,
-            Contracacao = p.Contracacao,
-            CriadoEm = p.CriadoEm,
-            AtualizadoEm = p.AtualizadoEm,
-            Produto = p.Produto == null ? null : new ProdutoDto
-            {
-                Id = p.Produto.Id,
-                Nome = p.Produto.Nome,
-                Descricao = p.Produto.Descricao,
-                Codigo = p.Produto.Codigo,
-                Status = p.Produto.Status,
-                CriadoEm = p.Produto.CriadoEm,
-                AtualizadoEm = p.Produto.AtualizadoEm
-            }
-        };
+       
 
         public async Task<PedidoDto?> UpdatePedido(Guid pedidoId, UpdatePedidoRequest request)
         {
@@ -99,6 +85,28 @@ namespace api.Application.Services
             var updated = await _repository.AtualizarPedido(pedidoId, pedido);
             return updated == null ? null : ToDto(updated);
         }
+
+
+         private static PedidoDto ToDto(Pedido p) => new()
+        {
+            Id = p.Id,
+            UsuarioId = p.UsuarioId,
+            UsuarioNome = p.Usuario?.Nome,
+            Status = p.Status,
+            Contracacao = p.Contracacao,
+            ValorTotal = p.ValorTotal,
+            CriadoEm = p.CriadoEm,
+            AtualizadoEm = p.AtualizadoEm,
+            Itens = p.Itens.Select(i => new PedidoItemDto
+            {
+                ProdutoId = i.ProdutoId,
+                NomeProduto = i.Produto.Nome,
+                Quantidade = i.Quantidade,
+                PrecoUnitario = i.PrecoUnitario,
+                Subtotal = i.Subtotal
+            }).ToList()
+        };
+        
 
     }
 }

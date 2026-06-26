@@ -21,6 +21,9 @@ namespace api.Domain
         [JsonPropertyName("status")]
         public bool Status {get; set;}
 
+        [JsonProperty("preco")]
+        public decimal Preco { get; set; }
+
         [JsonPropertyName("criado_em")]
         public DateTime CriadoEm { get; set; }
 
@@ -28,24 +31,35 @@ namespace api.Domain
         public DateTime? AtualizadoEm { get; set; }
 
         [SetsRequiredMembers]
-        public Produto(string nome, string descricao, string codigo, bool status = true)
+        public Produto(string nome, string descricao, decimal preco, string codigo, bool status = true)
         {
             Id = Guid.NewGuid();
             Nome = nome;
             Descricao = descricao;
+            Preco = preco;
             Codigo = codigo;
             Status = status;
             CriadoEm = DateTime.UtcNow;
             ValidarProduto();
         }
 
-        public void AtualizarProduto(string nome, string descricao, bool status, string codigo)
+        public Produto(string nome, string descricao, string codigo, bool status)
+        {
+            Nome = nome;
+            Descricao = descricao;
+            Codigo = codigo;
+            Status = status;
+        }
+
+        public void AtualizarProduto(string nome, string descricao, bool status, string codigo, decimal preco)
         {
             Nome = nome;
             Descricao = descricao;
             Status = status;
             Codigo = codigo;
+            Preco = preco;
             AtualizadoEm = DateTime.UtcNow;
+            ValidarProduto();
         }
 
         public void ValidarProduto()
@@ -58,6 +72,9 @@ namespace api.Domain
 
             if (string.IsNullOrWhiteSpace(Codigo))
                 throw new InvalidOperationException("Codigo do produto não pode estar vazio.");
+
+            if (this.Preco <= 0)
+                throw new InvalidOperationException("Valor do produto deve ser maior que zero");
         }
     }
 }
