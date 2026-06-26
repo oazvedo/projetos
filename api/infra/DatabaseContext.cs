@@ -102,15 +102,24 @@ namespace api.infra
                 entity.Property(u => u.Id)
                     .HasColumnName("id")
                     .IsRequired();
-                
+
                 entity.Property(u => u.Status)
                     .HasColumnName("status");
 
                 entity.Property(u => u.Contracacao)
                     .HasColumnName("contratacao");
-                
+
                 entity.Property(u => u.UsuarioId)
                     .HasColumnName("usuario_id");
+
+                entity.Property(u => u.ProdutoId)
+                    .HasColumnName("produto_id")
+                    .IsRequired();
+
+                entity.HasOne(u => u.Produto)
+                    .WithMany()
+                    .HasForeignKey(u => u.ProdutoId)
+                    .OnDelete(DeleteBehavior.Restrict);
 
                 entity.Property(u => u.CriadoEm)
                     .HasColumnName("criado_em")

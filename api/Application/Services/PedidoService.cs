@@ -1,5 +1,7 @@
 using api.Application.DTOs.Pedido;
+using api.Application.DTOs.Produto;
 using api.Application.Services.Interfaces;
+using api.domain.interfaces;
 using api.Domain;
 using api.Domain.Enums;
 using api.Domain.Interfaces;
@@ -9,10 +11,12 @@ namespace api.Application.Services
     public class PedidoService : IPedidoService
     {
         private readonly IPedidoRepository _repository;
+        private readonly IRepositoryBase<Produto> _produtoRepository;
 
-        public PedidoService(IPedidoRepository repository)
+        public PedidoService(IPedidoRepository repository, IRepositoryBase<Produto> produtoRepository)
         {
             _repository = repository;
+            _produtoRepository = produtoRepository;
         }
 
         public async Task<IEnumerable<PedidoDto>> GetAllPedidos()
@@ -35,7 +39,10 @@ namespace api.Application.Services
 
         public async Task<PedidoDto> CreatePedido(Guid usuarioId, CreatePedidoRequest request)
         {
-            var pedido = new Pedido(usuarioId, request.contratacao);
+            var produto = await _produtoRepository.GetByIdAsync(request.produtoId)
+                ?? throw new KeyNotFoundException($"Produto '{request.produtoId}' não encontrado.");
+
+            var pedido = new Pedido(usuarioId, produto.Id, request.contratacao);
             await _repository.AdicionarPedido(pedido);
             return ToDto(pedido);
         }
@@ -70,7 +77,17 @@ namespace api.Application.Services
             Status = p.Status,
             Contracacao = p.Contracacao,
             CriadoEm = p.CriadoEm,
-            AtualizadoEm = p.AtualizadoEm
+            AtualizadoEm = p.AtualizadoEm,
+            Produto = p.Produto == null ? null : new ProdutoDto
+            {
+                Id = p.Produto.Id,
+                Nome = p.Produto.Nome,
+                Descricao = p.Produto.Descricao,
+                Codigo = p.Produto.Codigo,
+                Status = p.Produto.Status,
+                CriadoEm = p.Produto.CriadoEm,
+                AtualizadoEm = p.Produto.AtualizadoEm
+            }
         };
 
         public async Task<PedidoDto?> UpdatePedido(Guid pedidoId, UpdatePedidoRequest request)

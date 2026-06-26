@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using api.Application.DTOs.Produto;
 using api.Domain.Enums;
 using Newtonsoft.Json;
 
@@ -14,18 +11,20 @@ namespace api.Application.DTOs.Pedido
 
         [JsonProperty("status")]
         public PedidoStatus Status { get; set; }
-        
+
         [JsonProperty("contratacao")]
-        public PedidoTipoContratacaoEnum Contracacao {get;set;}
+        public PedidoTipoContratacaoEnum Contracacao { get; set; }
+
+        [JsonProperty("produto")]
+        public ProdutoDto? Produto { get; set; }
 
         [JsonProperty("usuario_id")]
         public Guid UsuarioId { get; set; }
 
         [JsonProperty("criado_em")]
-        public DateTime CriadoEm {get; set;}
-        
-        [JsonProperty("atualizado_em")]
-        public DateTime? AtualizadoEm {get; set;}
+        public DateTime CriadoEm { get; set; }
 
+        [JsonProperty("atualizado_em")]
+        public DateTime? AtualizadoEm { get; set; }
     }
 }

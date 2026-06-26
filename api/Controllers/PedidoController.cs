@@ -58,9 +58,16 @@ namespace api.Controllers
         [Authorize(Policy = "Pedido.Create")]
         public async Task<ActionResult<PedidoDto>> Create(CreatePedidoRequest request)
         {
-            var usuarioId = User.GetId();
-            var pedido = await _service.CreatePedido(usuarioId, request);
-            return CreatedAtAction(nameof(GetById), new { id = pedido.Id }, pedido);
+            try
+            {
+                var usuarioId = User.GetId();
+                var pedido = await _service.CreatePedido(usuarioId, request);
+                return CreatedAtAction(nameof(GetById), new { id = pedido.Id }, pedido);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { mensagem = ex.Message });
+            }
         }
 
         [HttpPut("{id}")]
