@@ -1,3 +1,4 @@
+using api.Application.DTOs.Pedido;
 using api.Domain;
 using api.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -46,19 +47,16 @@ namespace api.infra.repository
             return pedido;
         }
 
-        public async Task<Pedido?> AtualizarPedido(Guid id, Pedido pedido)
+        public async Task<Pedido?> AtualizarPedido(Guid id, Pedido pedido, List<PedidoItem>? newItems = null)
         {
-            var existing = await _context.Pedidos
-                .Include(p => p.Usuario)
-                .Include(p => p.Itens).ThenInclude(i => i.Produto)
-                .FirstOrDefaultAsync(p => p.Id == id);
-            if (existing == null) return null;
+            if (newItems != null)
+            {
+                await _context.PedidoItens.Where(i => i.PedidoId == id).ExecuteDeleteAsync();
+                _context.PedidoItens.AddRange(newItems);
+            }
 
-            existing.Status = pedido.Status;
-            existing.Contracacao = pedido.Contracacao;
-            existing.AtualizadoEm = pedido.AtualizadoEm;
             await _context.SaveChangesAsync();
-            return existing;
+            return await GetPedidoById(id);
         }
 
         public async Task<bool> RemoverPedido(Guid id)

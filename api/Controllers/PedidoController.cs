@@ -71,7 +71,7 @@ namespace api.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize(Policy = "Pedido.Update")]
+        [Authorize(Policy = "Pedido.UpdateAdmin")]
         public async Task<ActionResult<PedidoDto>> UpdatePedido(Guid id, UpdatePedidoRequest request)
         {
             var pedido = await _service.UpdatePedido(id, request);

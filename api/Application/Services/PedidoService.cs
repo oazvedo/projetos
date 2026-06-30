@@ -82,7 +82,16 @@ namespace api.Application.Services
             if (pedido == null) return null;
 
             pedido.UpdatePedido(request.Contratacao, request.Status);
-            var updated = await _repository.AtualizarPedido(pedidoId, pedido);
+
+            var newItems = new List<PedidoItem>();
+            foreach (var item in request.Itens)
+            {
+                var produto = await _produtoRepository.GetByIdAsync(item.produtoId)
+                    ?? throw new KeyNotFoundException($"Produto '{item.produtoId}' não encontrado.");
+                newItems.Add(new PedidoItem(pedidoId, produto, item.quantidade));
+            }
+
+            var updated = await _repository.AtualizarPedido(pedidoId, pedido, newItems);
             return updated == null ? null : ToDto(updated);
         }
 

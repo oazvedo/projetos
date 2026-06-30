@@ -19,11 +19,12 @@ namespace api.infra
             "Permissao.Assign",
             "Permissao.Remove",
             "Permissao.RemoveAll",
-            //peridos
+            //pedidos
             "Pedido.Read",
             "Pedido.Create",
             "Pedido.Update",
             "Pedido.Delete",
+            "Pedido.UpdateAdmin",
             //produtos
             "Produto.Read",
             "Produto.Create",
