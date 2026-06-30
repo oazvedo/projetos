@@ -11,6 +11,7 @@ namespace api.infra
         }
 
         public DbSet<Usuario> Usuarios { get; set; }
+        public DbSet<Carteira> Carteiras { get; set; }
         public DbSet<Permissao> Permissoes { get; set; }
         public DbSet<UsuarioPermissao> UsuarioPermissoes { get; set; }
         public DbSet<Pedido> Pedidos {get; set;}
@@ -54,6 +55,39 @@ namespace api.infra
                     .IsRequired();
 
                 entity.Property(u => u.AtualizadoEm)
+                    .HasColumnName("atualizado_em")
+                    .IsRequired(false);
+
+                entity.HasOne(u => u.Carteira)
+                    .WithOne(c => c.Usuario)
+                    .HasForeignKey<Carteira>(c => c.UsuarioId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<Carteira>(entity =>
+            {
+                entity.ToTable("carteiras");
+
+                entity.HasKey(c => c.Id);
+
+                entity.Property(c => c.Id)
+                    .HasColumnName("id")
+                    .IsRequired();
+
+                entity.Property(c => c.UsuarioId)
+                    .HasColumnName("usuario_id")
+                    .IsRequired();
+
+                entity.Property(c => c.Saldo)
+                    .HasColumnName
+                    ("saldo")
+                    .IsRequired();
+
+                entity.Property(c => c.CriadoEm)
+                    .HasColumnName("criado_em")
+                    .IsRequired();
+                
+                entity.Property(c => c.AtualizadoEm)
                     .HasColumnName("atualizado_em")
                     .IsRequired(false);
             });

@@ -1,0 +1,50 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using api.Application.DTOs.Carteira;
+using api.Application.Services;
+using api.Application.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+
+namespace api.Controllers
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class CarteiraController(ICarteiraService service) : ControllerBase
+    {
+        private readonly ICarteiraService _service = service;
+
+
+        [HttpGet]
+        [Authorize(Policy = "Carteira.Read")]
+        public async Task <IActionResult> GetAllCarteiras()
+        {
+            var result = await _service.GetAllAsync();
+            if (result == null)
+                return NotFound();
+            return Ok(result);
+        }
+
+
+        [HttpGet("{id}")]
+        [Authorize(Policy = "Carteira.Read")]
+        public async Task <IActionResult> GetById(Guid id)
+        {
+            var result = await _service.GetByIdAsync(id);
+            if (result == null)
+                return NotFound();
+            return Ok(result);
+        }
+
+        [HttpPut("{id}")]
+        [Authorize(Policy = "Carteira.Update")]
+        public async Task <IActionResult> Update(Guid id, UpdateCarteiraRequest request)
+        {
+            var updated = await _service.UpdateCarteira(id, request);
+            return Ok(updated);
+        }
+        
+    }
+}

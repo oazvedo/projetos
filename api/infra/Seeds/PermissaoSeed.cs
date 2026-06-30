@@ -29,7 +29,12 @@ namespace api.infra
             "Produto.Read",
             "Produto.Create",
             "Produto.Update",
-            "Produto.Delete"
+            "Produto.Delete",
+            // carteiras
+            "Carteira.Read",
+            "Carteira.Create",
+            "Carteira.Update",
+            "Carteira.Delete"
         };
 
         public static async Task SeedAsync(DatabaseContext context)

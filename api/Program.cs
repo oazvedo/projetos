@@ -14,6 +14,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi;
 using api.Domain;
+using Microsoft.VisualStudio.SolutionPersistence.Model;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,12 +31,14 @@ builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 builder.Services.AddScoped<IPermissaoService, PermissaoService>();
 builder.Services.AddScoped<IPedidoService, PedidoService>();
 builder.Services.AddScoped<IProdutoService, ProdutoService>();
+builder.Services.AddScoped<ICarteiraService, CarteiraService>();
 // repositories
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddScoped<IPermissaoRepository, PermissaoRepository>();
 builder.Services.AddScoped<IPedidoRepository, PedidoRepository>();
 builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
 builder.Services.AddScoped<IRepositoryBase<Produto>, ProdutoRepository>();
+builder.Services.AddScoped<ICarteiraRepository, CarteiraRepository>();
 
 builder.Services.AddAuthentication(options =>
 {

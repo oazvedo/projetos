@@ -48,8 +48,6 @@ namespace api.Controllers
         public async Task<ActionResult<ProdutoDto>> Update(Guid id, UpdateProdutoRequest request)
         {
             var entity = new Produto(request.Nome, request.Descricao, request.Preco, request.Codigo, request.Status);
-            entity.Id = id;
-
             var produto = await _service.UpdateAsync(entity);
             if (produto == null)
                 return NotFound(new { mensagem = "Produto não encontrado." });

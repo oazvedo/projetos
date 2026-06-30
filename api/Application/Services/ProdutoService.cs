@@ -17,6 +17,7 @@ namespace api.Application.Services
             Descricao = entity.Descricao,
             Codigo = entity.Codigo,
             Status = entity.Status,
+            Preco = entity.Preco,
             CriadoEm = entity.CriadoEm,
             AtualizadoEm = entity.AtualizadoEm
         };
