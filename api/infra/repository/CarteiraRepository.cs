@@ -8,6 +8,10 @@ namespace api.infra.repository
     {
         public CarteiraRepository(DatabaseContext context) : base(context) {}
 
+        public async Task <Carteira?> GetCarteiraByUsuarioId(Guid id)
+        {
+            return await _context.Carteiras.FirstOrDefaultAsync(u => u.UsuarioId == id);
+        }
         public override async Task<IEnumerable<Carteira>> GetAllAsync()
             => await _dbSet.Include(c => c.Usuario).ToListAsync();
 

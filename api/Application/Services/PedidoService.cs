@@ -1,5 +1,6 @@
 using api.Application.DTOs.Pedido;
 using api.Application.Services.Interfaces;
+using api.domain;
 using api.domain.interfaces;
 using api.Domain;
 using api.Domain.Enums;
@@ -11,11 +12,13 @@ namespace api.Application.Services
     {
         private readonly IPedidoRepository _repository;
         private readonly IRepositoryBase<Produto> _produtoRepository;
+        private readonly ICarteiraRepository _carteiraService;
 
-        public PedidoService(IPedidoRepository repository, IRepositoryBase<Produto> produtoRepository)
+        public PedidoService(IPedidoRepository repository, IRepositoryBase<Produto> produtoRepository, ICarteiraRepository carteiraService)
         {
             _repository = repository;
             _produtoRepository = produtoRepository;
+            _carteiraService = carteiraService;
         }
 
         public async Task<IEnumerable<PedidoDto>> GetAllPedidos()
@@ -46,9 +49,20 @@ namespace api.Application.Services
                     ?? throw new KeyNotFoundException($"Produto '{item.produtoId}' não encontrado.");
                 pedido.AdicionarItem(produto, item.quantidade);
             }
+            var carteiraUsuario = await _carteiraService.GetCarteiraByUsuarioId(usuarioId);
 
-            await _repository.AdicionarPedido(pedido);
-            return ToDto(pedido);
+            if (((double)pedido.ValorTotal) > carteiraUsuario!.Saldo)
+            {
+                throw new KeyNotFoundException("Saldo insuficiente");
+            }
+            else
+            {
+                carteiraUsuario.UpdateBalance(-(double)pedido.ValorTotal);
+                await _carteiraService.UpdateAsync(carteiraUsuario);
+                await _repository.AdicionarPedido(pedido);
+                return ToDto(pedido);
+            }
+
         }
 
         public async Task<PedidoDto?> UpdatePedidoStatus(Guid id, PedidoStatus newStatus)
