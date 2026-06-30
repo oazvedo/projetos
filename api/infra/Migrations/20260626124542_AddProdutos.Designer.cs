@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using api.infra;
@@ -11,9 +12,11 @@ using api.infra;
 namespace api.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20260626124542_AddProdutos")]
+    partial class AddProdutos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,42 +24,6 @@ namespace api.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("api.Domain.Carteira", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id")
-                        .HasJsonPropertyName("id");
-
-                    b.Property<DateTime?>("AtualizadoEm")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("atualizado_em")
-                        .HasJsonPropertyName("atualizado_em");
-
-                    b.Property<DateTime>("CriadoEm")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("criado_em")
-                        .HasJsonPropertyName("criado_em");
-
-                    b.Property<double>("Saldo")
-                        .HasColumnType("double precision")
-                        .HasColumnName("saldo")
-                        .HasJsonPropertyName("saldo");
-
-                    b.Property<Guid>("UsuarioId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("usuario_id")
-                        .HasJsonPropertyName("usuario_id");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UsuarioId")
-                        .IsUnique();
-
-                    b.ToTable("carteiras", (string)null);
-                });
 
             modelBuilder.Entity("api.Domain.Pedido", b =>
                 {
@@ -87,41 +54,7 @@ namespace api.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UsuarioId");
-
                     b.ToTable("pedidos", (string)null);
-                });
-
-            modelBuilder.Entity("api.Domain.PedidoItem", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<Guid>("PedidoId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("pedido_id");
-
-                    b.Property<decimal>("PrecoUnitario")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("preco_unitario");
-
-                    b.Property<Guid>("ProdutoId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("produto_id");
-
-                    b.Property<int>("Quantidade")
-                        .HasColumnType("integer")
-                        .HasColumnName("quantidade");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PedidoId");
-
-                    b.HasIndex("ProdutoId");
-
-                    b.ToTable("pedido_itens", (string)null);
                 });
 
             modelBuilder.Entity("api.Domain.Produto", b =>
@@ -159,9 +92,6 @@ namespace api.Migrations
                         .HasColumnType("text")
                         .HasColumnName("nome")
                         .HasJsonPropertyName("nome");
-
-                    b.Property<decimal>("Preco")
-                        .HasColumnType("numeric");
 
                     b.Property<bool>("Status")
                         .HasColumnType("boolean")
@@ -259,45 +189,6 @@ namespace api.Migrations
                     b.ToTable("usuario_permissoes", (string)null);
                 });
 
-            modelBuilder.Entity("api.Domain.Carteira", b =>
-                {
-                    b.HasOne("api.domain.Usuario", "Usuario")
-                        .WithOne("Carteira")
-                        .HasForeignKey("api.Domain.Carteira", "UsuarioId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Usuario");
-                });
-
-            modelBuilder.Entity("api.Domain.Pedido", b =>
-                {
-                    b.HasOne("api.domain.Usuario", "Usuario")
-                        .WithMany()
-                        .HasForeignKey("UsuarioId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Usuario");
-                });
-
-            modelBuilder.Entity("api.Domain.PedidoItem", b =>
-                {
-                    b.HasOne("api.Domain.Pedido", null)
-                        .WithMany("Itens")
-                        .HasForeignKey("PedidoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("api.Domain.Produto", "Produto")
-                        .WithMany()
-                        .HasForeignKey("ProdutoId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Produto");
-                });
-
             modelBuilder.Entity("api.domain.UsuarioPermissao", b =>
                 {
                     b.HasOne("api.domain.Permissao", "Permissao")
@@ -317,11 +208,6 @@ namespace api.Migrations
                     b.Navigation("Usuario");
                 });
 
-            modelBuilder.Entity("api.Domain.Pedido", b =>
-                {
-                    b.Navigation("Itens");
-                });
-
             modelBuilder.Entity("api.domain.Permissao", b =>
                 {
                     b.Navigation("UsuarioPermissoes");
@@ -329,8 +215,6 @@ namespace api.Migrations
 
             modelBuilder.Entity("api.domain.Usuario", b =>
                 {
-                    b.Navigation("Carteira");
-
                     b.Navigation("UsuarioPermissoes");
                 });
 #pragma warning restore 612, 618

@@ -8,7 +8,7 @@ namespace api.Domain.Interfaces
         Task<IEnumerable<Pedido>> GetPedidosByUsuarioIdAsync(Guid usuarioId);
         Task<Pedido?> GetPedidoById(Guid id);
         Task<Pedido> AdicionarPedido(Pedido pedido);
-        Task<Pedido?> AtualizarPedido(Guid id, Pedido pedido);
+        Task<Pedido?> AtualizarPedido(Guid id, Pedido pedido, List<PedidoItem>? newItems = null);
         Task<bool> RemoverPedido(Guid id);
     }
 }

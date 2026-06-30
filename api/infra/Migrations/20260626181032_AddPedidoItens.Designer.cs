@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using api.infra;
@@ -11,9 +12,11 @@ using api.infra;
 namespace api.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20260626181032_AddPedidoItens")]
+    partial class AddPedidoItens
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,42 +24,6 @@ namespace api.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("api.Domain.Carteira", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id")
-                        .HasJsonPropertyName("id");
-
-                    b.Property<DateTime?>("AtualizadoEm")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("atualizado_em")
-                        .HasJsonPropertyName("atualizado_em");
-
-                    b.Property<DateTime>("CriadoEm")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("criado_em")
-                        .HasJsonPropertyName("criado_em");
-
-                    b.Property<double>("Saldo")
-                        .HasColumnType("double precision")
-                        .HasColumnName("saldo")
-                        .HasJsonPropertyName("saldo");
-
-                    b.Property<Guid>("UsuarioId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("usuario_id")
-                        .HasJsonPropertyName("usuario_id");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UsuarioId")
-                        .IsUnique();
-
-                    b.ToTable("carteiras", (string)null);
-                });
 
             modelBuilder.Entity("api.Domain.Pedido", b =>
                 {
@@ -86,8 +53,6 @@ namespace api.Migrations
                         .HasColumnName("usuario_id");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("UsuarioId");
 
                     b.ToTable("pedidos", (string)null);
                 });
@@ -259,28 +224,6 @@ namespace api.Migrations
                     b.ToTable("usuario_permissoes", (string)null);
                 });
 
-            modelBuilder.Entity("api.Domain.Carteira", b =>
-                {
-                    b.HasOne("api.domain.Usuario", "Usuario")
-                        .WithOne("Carteira")
-                        .HasForeignKey("api.Domain.Carteira", "UsuarioId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Usuario");
-                });
-
-            modelBuilder.Entity("api.Domain.Pedido", b =>
-                {
-                    b.HasOne("api.domain.Usuario", "Usuario")
-                        .WithMany()
-                        .HasForeignKey("UsuarioId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Usuario");
-                });
-
             modelBuilder.Entity("api.Domain.PedidoItem", b =>
                 {
                     b.HasOne("api.Domain.Pedido", null)
@@ -329,8 +272,6 @@ namespace api.Migrations
 
             modelBuilder.Entity("api.domain.Usuario", b =>
                 {
-                    b.Navigation("Carteira");
-
                     b.Navigation("UsuarioPermissoes");
                 });
 #pragma warning restore 612, 618

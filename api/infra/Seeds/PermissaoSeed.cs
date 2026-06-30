@@ -7,20 +7,34 @@ namespace api.infra
     {
         public static readonly string[] PermissionNames =
         {
+            // usuarios
             "Usuario.Read",
             "Usuario.Create",
             "Usuario.Update",
             "Usuario.Delete",
             "Usuario.EmailUpdate",
             "Usuario.PasswordUpdate",
+            //permissoes
             "Permissao.Read",
             "Permissao.Assign",
             "Permissao.Remove",
             "Permissao.RemoveAll",
+            //pedidos
             "Pedido.Read",
             "Pedido.Create",
             "Pedido.Update",
-            "Pedido.Delete"
+            "Pedido.Delete",
+            "Pedido.UpdateAdmin",
+            //produtos
+            "Produto.Read",
+            "Produto.Create",
+            "Produto.Update",
+            "Produto.Delete",
+            // carteiras
+            "Carteira.Read",
+            "Carteira.Create",
+            "Carteira.Update",
+            "Carteira.Delete"
         };
 
         public static async Task SeedAsync(DatabaseContext context)

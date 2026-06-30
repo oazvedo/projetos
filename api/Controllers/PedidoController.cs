@@ -58,14 +58,31 @@ namespace api.Controllers
         [Authorize(Policy = "Pedido.Create")]
         public async Task<ActionResult<PedidoDto>> Create(CreatePedidoRequest request)
         {
-            var usuarioId = User.GetId();
-            var pedido = await _service.CreatePedido(usuarioId, request);
-            return CreatedAtAction(nameof(GetById), new { id = pedido.Id }, pedido);
+            try
+            {
+                var usuarioId = User.GetId();
+                var pedido = await _service.CreatePedido(usuarioId, request);
+                return CreatedAtAction(nameof(GetById), new { id = pedido.Id }, pedido);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { mensagem = ex.Message });
+            }
+        }
+
+        [HttpPut("{id}")]
+        [Authorize(Policy = "Pedido.UpdateAdmin")]
+        public async Task<ActionResult<PedidoDto>> UpdatePedido(Guid id, UpdatePedidoRequest request)
+        {
+            var pedido = await _service.UpdatePedido(id, request);
+            if (pedido == null)
+                return NotFound(new {message = "Pedido não encontrado"});
+            return NoContent();
         }
 
         [HttpPatch("{id}/status")]
         [Authorize(Policy = "Pedido.Update")]
-        public async Task<ActionResult<PedidoDto>> UpdateStatus(Guid id, UpdatePedidoRequest request)
+        public async Task<ActionResult<PedidoDto>> UpdateStatus(Guid id, UpdateStatusPedidoRequest request)
         {
             try
             {
@@ -81,7 +98,7 @@ namespace api.Controllers
             }
         }
 
-        [HttpPut("{id}")]
+        [HttpPatch("{id}/contratacao")]
         [Authorize(Policy = "Pedido.Update")]
         public async Task<ActionResult<PedidoDto>> Update(Guid id, PutPedidoRequest request)
         {

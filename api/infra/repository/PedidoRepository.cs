@@ -1,3 +1,4 @@
+using api.Application.DTOs.Pedido;
 using api.Domain;
 using api.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -15,38 +16,47 @@ namespace api.infra.repository
 
         public async Task<IEnumerable<Pedido>> GetPedidosAsync()
         {
-            return await _context.Pedidos.ToListAsync();
+            return await _context.Pedidos
+                .Include(p => p.Usuario)
+                .Include(p => p.Itens).ThenInclude(i => i.Produto)
+                .ToListAsync();
         }
 
         public async Task<IEnumerable<Pedido>> GetPedidosByUsuarioIdAsync(Guid usuarioId)
         {
             return await _context.Pedidos
+                .Include(p => p.Usuario)
+                .Include(p => p.Itens).ThenInclude(i => i.Produto)
                 .Where(p => p.UsuarioId == usuarioId)
                 .ToListAsync();
         }
 
         public async Task<Pedido?> GetPedidoById(Guid id)
         {
-            return await _context.Pedidos.FindAsync(id);
+            return await _context.Pedidos
+                .Include(p => p.Usuario)
+                .Include(p => p.Itens).ThenInclude(i => i.Produto)
+                .FirstOrDefaultAsync(p => p.Id == id);
         }
 
         public async Task<Pedido> AdicionarPedido(Pedido pedido)
         {
             _context.Pedidos.Add(pedido);
             await _context.SaveChangesAsync();
+            await _context.Entry(pedido).Collection(p => p.Itens).LoadAsync();
             return pedido;
         }
 
-        public async Task<Pedido?> AtualizarPedido(Guid id, Pedido pedido)
+        public async Task<Pedido?> AtualizarPedido(Guid id, Pedido pedido, List<PedidoItem>? newItems = null)
         {
-            var existing = await _context.Pedidos.FindAsync(id);
-            if (existing == null) return null;
+            if (newItems != null)
+            {
+                await _context.PedidoItens.Where(i => i.PedidoId == id).ExecuteDeleteAsync();
+                _context.PedidoItens.AddRange(newItems);
+            }
 
-            existing.Status = pedido.Status;
-            existing.Contracacao = pedido.Contracacao;
-            existing.AtualizadoEm = pedido.AtualizadoEm;
             await _context.SaveChangesAsync();
-            return existing;
+            return await GetPedidoById(id);
         }
 
         public async Task<bool> RemoverPedido(Guid id)
