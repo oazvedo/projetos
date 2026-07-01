@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using api.Application.DTOs.Carteira;
 using api.Application.Services;
 using api.Application.Services.Interfaces;
+using api.Application.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,6 +23,17 @@ namespace api.Controllers
         public async Task <IActionResult> GetAllCarteiras()
         {
             var result = await _service.GetAllAsync();
+            if (result == null)
+                return NotFound();
+            return Ok(result);
+        }
+
+        [HttpGet("minha-carteira")]
+        [Authorize(Policy = "Carteira.Read")]
+        public async Task <IActionResult> GetMyCarteira()
+        {
+            var usuarioId = User.GetId();
+            var result = await _service.GetMyCarteiraAsync(usuarioId);
             if (result == null)
                 return NotFound();
             return Ok(result);
