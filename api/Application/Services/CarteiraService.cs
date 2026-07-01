@@ -20,7 +20,14 @@ namespace api.Application.Services
             var carteira = await _repository.GetByIdAsync(id)
                 ?? throw new KeyNotFoundException($"Carteira {id} não encontrada");
 
-            carteira.UpdateBalance(request.Saldo);
+            if (string.IsNullOrWhiteSpace(request.Cupom))
+            {
+                carteira.UpdateBalance(request.Saldo);
+            }
+            else
+            {
+                carteira.ApplyBonus(request.Saldo, request.Cupom);
+            }
 
             var updated = await _repository.UpdateAsync(carteira);
             return ToDto(updated!);

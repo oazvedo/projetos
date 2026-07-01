@@ -45,10 +45,13 @@ namespace api.Domain
 
         public Produto(string nome, string descricao, string codigo, bool status)
         {
+            Id = Guid.NewGuid();
             Nome = nome;
             Descricao = descricao;
             Codigo = codigo;
             Status = status;
+            CriadoEm = DateTime.UtcNow;
+            ValidarProduto();
         }
 
         public void AtualizarProduto(string nome, string descricao, bool status, string codigo, decimal preco)
