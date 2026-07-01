@@ -20,11 +20,12 @@ namespace api.Controllers
 
         [HttpGet]
         [Authorize(Policy = "Carteira.Read")]
-        public async Task <IActionResult> GetAllCarteiras()
+        public async Task <IActionResult> GetAllCarteiras([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
         {
-            var result = await _service.GetAllAsync();
-            if (result == null)
-                return NotFound();
+            if (page < 1) page = 1;
+            if (pageSize < 1) pageSize = 10;
+
+            var result = await _service.GetPagedAsync(page, pageSize);
             return Ok(result);
         }
 

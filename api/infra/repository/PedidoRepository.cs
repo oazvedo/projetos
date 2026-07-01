@@ -22,6 +22,23 @@ namespace api.infra.repository
                 .ToListAsync();
         }
 
+        public async Task<(IEnumerable<Pedido> Items, int TotalCount)> GetPedidosPagedAsync(int page, int pageSize)
+        {
+            var query = _context.Pedidos
+                .AsNoTracking()
+                .Include(p => p.Usuario)
+                .Include(p => p.Itens).ThenInclude(i => i.Produto)
+                .OrderByDescending(p => p.CriadoEm);
+
+            var totalCount = await query.CountAsync();
+            var items = await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return (items, totalCount);
+        }
+
         public async Task<IEnumerable<Pedido>> GetPedidosByUsuarioIdAsync(Guid usuarioId)
         {
             return await _context.Pedidos

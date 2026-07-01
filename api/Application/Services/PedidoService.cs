@@ -1,3 +1,4 @@
+using api.Application.DTOs.Common;
 using api.Application.DTOs.Pedido;
 using api.Application.Services.Interfaces;
 using api.domain;
@@ -21,16 +22,37 @@ namespace api.Application.Services
             _carteiraService = carteiraService;
         }
 
-        public async Task<IEnumerable<PedidoDto>> GetAllPedidos()
+        public async Task<PagedResult<PedidoDto>> GetAllPedidos(int page = 1, int pageSize = 10)
         {
-            var pedidos = await _repository.GetPedidosAsync();
-            return pedidos.Select(ToDto);
+            var (pedidos, totalCount) = await _repository.GetPedidosPagedAsync(page, pageSize);
+            return new PagedResult<PedidoDto>
+            {
+                Page = page,
+                PageSize = pageSize,
+                TotalCount = totalCount,
+                Items = pedidos.Select(ToDto)
+            };
         }
 
         public async Task<IEnumerable<PedidoDto>> GetPedidosByUsuarioId(Guid usuarioId)
         {
             var pedidos = await _repository.GetPedidosByUsuarioIdAsync(usuarioId);
             return pedidos.Select(ToDto);
+        }
+
+        public async Task<PagedResult<PedidoDto>> GetPedidosByUsuarioId(Guid usuarioId, int page, int pageSize)
+        {
+            var pedidos = await _repository.GetPedidosByUsuarioIdAsync(usuarioId);
+            var totalCount = pedidos.Count();
+            var items = pedidos.Skip((page - 1) * pageSize).Take(pageSize);
+
+            return new PagedResult<PedidoDto>
+            {
+                Page = page,
+                PageSize = pageSize,
+                TotalCount = totalCount,
+                Items = items.Select(ToDto)
+            };
         }
 
         public async Task<PedidoDto?> GetPedidoById(Guid id)

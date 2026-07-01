@@ -51,7 +51,6 @@ namespace api.Domain
             Codigo = codigo;
             Status = status;
             CriadoEm = DateTime.UtcNow;
-            ValidarProduto();
         }
 
         public void AtualizarProduto(string nome, string descricao, bool status, string codigo, decimal preco)

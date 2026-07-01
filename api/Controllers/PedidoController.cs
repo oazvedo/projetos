@@ -1,3 +1,4 @@
+using api.Application.DTOs.Common;
 using api.Application.DTOs.Pedido;
 using api.Application.Services.Interfaces;
 using api.Application.Utils;
@@ -20,9 +21,12 @@ namespace api.Controllers
 
         [HttpGet]
         [Authorize(Policy = "Pedido.Read")]
-        public async Task<ActionResult<IEnumerable<PedidoDto>>> GetAll()
+        public async Task<ActionResult<PagedResult<PedidoDto>>> GetAll([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
         {
-            var pedidos = await _service.GetAllPedidos();
+            if (page < 1) page = 1;
+            if (pageSize < 1) pageSize = 10;
+
+            var pedidos = await _service.GetAllPedidos(page, pageSize);
             return Ok(pedidos);
         }
 
@@ -39,18 +43,24 @@ namespace api.Controllers
 
         [HttpGet("usuario/{usuarioId}")]
         [Authorize(Policy = "Pedido.Read")]
-        public async Task<ActionResult<IEnumerable<PedidoDto>>> GetByUsuario(Guid usuarioId)
+        public async Task<ActionResult<PagedResult<PedidoDto>>> GetByUsuario(Guid usuarioId, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
         {
-            var pedidos = await _service.GetPedidosByUsuarioId(usuarioId);
+            if (page < 1) page = 1;
+            if (pageSize < 1) pageSize = 10;
+
+            var pedidos = await _service.GetPedidosByUsuarioId(usuarioId, page, pageSize);
             return Ok(pedidos);
         }
 
         [HttpGet("meus")]
         [Authorize(Policy = "Pedido.Read")]
-        public async Task<ActionResult<IEnumerable<PedidoDto>>> GetMeus()
+        public async Task<ActionResult<PagedResult<PedidoDto>>> GetMeus([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
         {
+            if (page < 1) page = 1;
+            if (pageSize < 1) pageSize = 10;
+
             var usuarioId = User.GetId();
-            var pedidos = await _service.GetPedidosByUsuarioId(usuarioId);
+            var pedidos = await _service.GetPedidosByUsuarioId(usuarioId, page, pageSize);
             return Ok(pedidos);
         }
 
