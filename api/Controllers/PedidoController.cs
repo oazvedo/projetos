@@ -1,5 +1,7 @@
 using api.Application.DTOs.Common;
 using api.Application.DTOs.Pedido;
+using api.Application.DTOs.Pedido.Relatorio;
+using api.Application.Handlers.Relatorio;
 using api.Application.Services.Interfaces;
 using api.Application.Utils;
 using api.Domain.Enums;
@@ -13,10 +15,20 @@ namespace api.Controllers
     public class PedidoController : ControllerBase
     {
         private readonly IPedidoService _service;
+        private readonly RelatorioPedidosHandler _handler;
 
-        public PedidoController(IPedidoService service)
+        public PedidoController(IPedidoService service, RelatorioPedidosHandler handler)
         {
             _service = service;
+            _handler = handler;
+        }
+        
+        [HttpGet("relatorio")]
+        [Authorize(Policy = "Pedido.Read")]
+        public async Task<ActionResult<RelatorioPedidoResponse>> GetRelatorio(RelatorioPedidoRequest request)
+        {
+            var relatorio = await _handler.Handle(request);
+            return Ok(relatorio);
         }
 
         [HttpGet]

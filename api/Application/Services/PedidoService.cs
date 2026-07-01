@@ -110,6 +110,14 @@ namespace api.Application.Services
         public Task<bool> DeleteAsync(Guid id)
             => _repository.RemoverPedido(id);
 
+        public async Task<IEnumerable<PedidoDto>> GetPedidosByPeriodo(DateTime dataInicio, DateTime dataFim)
+        {
+            var pedidos = await _repository.GetPedidosAsync();
+            return pedidos
+                .Where(p => p.CriadoEm >= dataInicio && p.CriadoEm <= dataFim.Date.AddDays(1).AddTicks(-1))
+                .Select(ToDto);
+        }
+
        
 
         public async Task<PedidoDto?> UpdatePedido(Guid pedidoId, UpdatePedidoRequest request)

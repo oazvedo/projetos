@@ -15,6 +15,7 @@ using System.Text;
 using Microsoft.OpenApi;
 using api.Domain;
 using Microsoft.VisualStudio.SolutionPersistence.Model;
+using api.Application.Handlers.Relatorio;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,6 +40,9 @@ builder.Services.AddScoped<IPedidoRepository, PedidoRepository>();
 builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
 builder.Services.AddScoped<IRepositoryBase<Produto>, ProdutoRepository>();
 builder.Services.AddScoped<ICarteiraRepository, CarteiraRepository>();
+
+// handlers
+builder.Services.AddScoped<RelatorioPedidosHandler>();
 
 builder.Services.AddAuthentication(options =>
 {

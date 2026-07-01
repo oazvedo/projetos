@@ -7,8 +7,10 @@ namespace api.Application.DTOs.Pedido.Relatorio
     {
         [JsonPropertyName("produto_mais_vendido")]
         public string ProdutoMaisVendido { get; set; } = string.Empty;
-        [JsonPropertyName("total_vendas")]
+        [JsonPropertyName("total_de_vendas")]
         public int TotalVendas { get; set; }
+        [JsonPropertyName("total_de_valor_vendas")]
+        public decimal TotalValorVendas { get; set; }
         [JsonPropertyName("maior_valor_de_venda")]
         public decimal MaiorValorDeVenda { get; set; }
         [JsonPropertyName("cliente_mais_frequente")]
